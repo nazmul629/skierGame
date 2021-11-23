@@ -1,2 +1,2 @@
-# skierGame
+# TicTacToe
 PyGame 
