@@ -1,3 +1,4 @@
+from typing import Collection
 import  pygame
 from pygame.locals import *
 pygame.init()
@@ -17,11 +18,13 @@ pos = []
 player = 1
 green = (0,255,0)
 red = (255,0,0)
+blue = (0,0,255)
 
 
 winner = 0 
 game_over = False
-
+font = pygame.font.SysFont(None,50)
+again_rect =Rect(screen_wigth//2 - 80 ,screen_hight//2+10, 220,45)
 
 def draw_grid():
     bg = (255,255,200)
@@ -35,6 +38,8 @@ for x in range(3):
     row = [0]*3
     markers.append(row)
 # print(markers)
+
+
 
 def draw_markers():
 	x_pos = 0
@@ -50,6 +55,9 @@ def draw_markers():
 				pygame.draw.circle(screen, green, (x_pos * 100+50, y_pos * 100 + 50), 38, line_wigth)
 			y_pos += 1
 		x_pos += 1	
+
+
+
 
 def check_winner():
     global winner
@@ -79,10 +87,20 @@ def check_winner():
         winner = 2
         game_over =True
 
+def draw_winner(winner):
+    win_text ="Player"+str(winner) + "Wins!"
+    win_img = font.render(win_text,True,blue)
+    pygame.draw.rect(screen,green,(screen_wigth//2 -100, screen_hight//2 - 60,230,60))
+    screen.blit(win_img,(screen_wigth//2 -100, screen_hight//2 - 50))
+
+    again_play = "Play Again ?"
+    again_img = font.render(again_play,True,blue)
+    pygame.draw.rect(screen,green,again_rect)
+    screen.blit(again_img,(screen_wigth//2 - 80, screen_hight//2 + 10))
+    
 
 
 
-        
 
 run = True
 while run:
@@ -108,7 +126,26 @@ while run:
                     markers[cell_x // 100][cell_y // 100] = player
                     player *= -1
                     check_winner()
-
-
+                    
+    if game_over ==True:
+        draw_winner(winner)
+        #check for mouseclick to see if we clicked on Play Again
+        if event.type == pygame.MOUSEBUTTONDOWN and clicked == False:
+            clicked = True
+        if event.type == pygame.MOUSEBUTTONUP and clicked == True:
+            clicked = False
+            pos = pygame.mouse.get_pos()
+            print(pos)
+            if again_rect.collidepoint(pos):
+				#reset variables
+                markers = []
+                pos=[]
+                player = 1
+                winner = 0
+                game_over = False
+				#create empty 3 x 3 list to represent the grid
+                for x in range (3):
+                    row = [0] * 3
+                    markers.append(row)
     pygame.display.update()        
 pygame.quit()
